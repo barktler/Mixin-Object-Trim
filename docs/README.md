@@ -15,6 +15,19 @@ yarn add @barktler/mixin-object-trim
 npm install @barktler/mixin-object-trim --save
 ```
 
+## Usage
+
+```ts
+import { createObjectTrimMixin } from "@barktler/mixin-object-trim";
+import { YourAPI } from "somewhere";
+
+const api: YourAPI = new YourAPI();
+api.useMixin(createObjectTrimMixin({
+    trimRequestBody: true,
+    trimResponseData: true,
+}));
+```
+
 ## Documents
 
 See [Barktler Documents](//barktler.com).
