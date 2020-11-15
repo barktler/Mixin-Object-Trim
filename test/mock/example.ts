@@ -19,13 +19,10 @@ export class ExampleAPI extends Barktler<any, ExampleAPIResponse> {
         mockResponseData: true,
     });
 
-    private readonly _url: string;
-
-    public constructor(url: string) {
+    public constructor() {
 
         super();
 
-        this._url = url;
         super._declareResponseDataPattern({
             type: 'map',
             map: {
@@ -36,11 +33,12 @@ export class ExampleAPI extends Barktler<any, ExampleAPIResponse> {
         });
     }
 
-    public async fetch(): Promise<ExampleAPIResponse> {
+    public async fetch(body: any): Promise<ExampleAPIResponse> {
 
         return await this._requestForData({
-            url: this._url,
+            url: 'https://example.com',
             method: 'POST',
+            body,
         });
     }
 }

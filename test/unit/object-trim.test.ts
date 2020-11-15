@@ -18,9 +18,14 @@ describe('Given [createObjectTrimMixin] function', (): void => {
     it('should be able to trim request data', async (): Promise<void> => {
 
         let requestBody: Record<string, any> | undefined;
-        const url: string = chance.string();
 
-        const api: ExampleAPI = new ExampleAPI(url);
+        const validKey: string = chance.string();
+        const validValue: string = chance.string();
+
+        const undefinedKey: string = chance.string();
+        const nullKey: string = chance.string();
+
+        const api: ExampleAPI = new ExampleAPI();
         api.useMixin(createObjectTrimMixin({
             trimRequestBody: true,
         }));
@@ -29,9 +34,15 @@ describe('Given [createObjectTrimMixin] function', (): void => {
             requestBody = data.body;
         });
 
-        const response: ExampleAPIResponse = await api.fetch();
+        const response: ExampleAPIResponse = await api.fetch({
+            [validKey]: validValue,
+            [undefinedKey]: undefined,
+            [nullKey]: null,
+        });
 
         expect(typeof response.hello).to.be.equal('string');
-        expect(requestBody).to.be.deep.equal({});
+        expect(requestBody).to.be.deep.equal({
+            [validKey]: validValue,
+        });
     });
 });
