@@ -6,16 +6,18 @@
 
 import { Barktler, BarktlerMixin, IRequestConfig } from "@barktler/core";
 
-export type BaseURLMixinOptions = {
+export type ObjectTrimMixinOptions = {
 
-    readonly beaeURL: string;
+    readonly trimRequestBody: boolean;
+    readonly trimResponseData: boolean;
 };
 
-export const createBaseURLMixin = (options: Partial<BaseURLMixinOptions> = {}): BarktlerMixin => {
+export const createObjectTrimMixin = (options: Partial<ObjectTrimMixinOptions> = {}): BarktlerMixin => {
 
-    const mergedOptions: BaseURLMixinOptions = {
+    const mergedOptions: ObjectTrimMixinOptions = {
 
-        beaeURL: '',
+        trimRequestBody: false,
+        trimResponseData: false,
         ...options,
     };
 
@@ -23,9 +25,25 @@ export const createBaseURLMixin = (options: Partial<BaseURLMixinOptions> = {}): 
 
         instance.preHook.processor.add((request: IRequestConfig): IRequestConfig => {
 
+            if (!request.body) {
+                return request;
+            }
+
+            if (!mergedOptions.trimRequestBody) {
+                return request;
+            }
+
             return {
                 ...request,
-                url: mergedOptions.beaeURL + request.url,
+                body: Object.keys(request.body).reduce((previous: Record<string, any>, key: string) => {
+                    if (request.body[key] === null || typeof request.body[key] === 'undefined') {
+                        return previous;
+                    }
+                    return {
+                        ...previous,
+                        [key]: request.body[key],
+                    };
+                }, {}),
             };
         });
     };
