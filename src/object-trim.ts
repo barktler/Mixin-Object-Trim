@@ -23,28 +23,27 @@ export const createObjectTrimMixin = (options: Partial<ObjectTrimMixinOptions> =
 
     return (instance: Barktler) => {
 
-        instance.preHook.processor.add((request: IRequestConfig): IRequestConfig => {
+        if (mergedOptions.trimRequestBody) {
 
-            if (!request.body) {
-                return request;
-            }
+            instance.preHook.processor.add((request: IRequestConfig): IRequestConfig => {
 
-            if (!mergedOptions.trimRequestBody) {
-                return request;
-            }
+                if (!request.body) {
+                    return request;
+                }
 
-            return {
-                ...request,
-                body: Object.keys(request.body).reduce((previous: Record<string, any>, key: string) => {
-                    if (request.body[key] === null || typeof request.body[key] === 'undefined') {
-                        return previous;
-                    }
-                    return {
-                        ...previous,
-                        [key]: request.body[key],
-                    };
-                }, {}),
-            };
-        });
+                return {
+                    ...request,
+                    body: Object.keys(request.body).reduce((previous: Record<string, any>, key: string) => {
+                        if (request.body[key] === null || typeof request.body[key] === 'undefined') {
+                            return previous;
+                        }
+                        return {
+                            ...previous,
+                            [key]: request.body[key],
+                        };
+                    }, {}),
+                };
+            });
+        }
     };
 };
