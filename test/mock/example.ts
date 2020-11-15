@@ -29,6 +29,14 @@ export class ExampleAPI extends Barktler<any, ExampleAPIResponse> {
                 hello: {
                     type: 'string',
                 },
+                emptyUndefined: {
+                    type: 'empty',
+                    allowUndefined: true,
+                },
+                emptyNull: {
+                    type: 'empty',
+                    allowNull: true,
+                },
             },
         });
     }
