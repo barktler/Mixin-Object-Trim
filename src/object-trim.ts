@@ -4,7 +4,7 @@
  * @description Object Trim
  */
 
-import { Barktler, BarktlerMixin, IRequestConfig } from "@barktler/core";
+import { Barktler, BarktlerMixin, IRequestConfig, IResponseConfig } from "@barktler/core";
 
 export type ObjectTrimMixinOptions = {
 
@@ -40,6 +40,29 @@ export const createObjectTrimMixin = (options: Partial<ObjectTrimMixinOptions> =
                         return {
                             ...previous,
                             [key]: request.body[key],
+                        };
+                    }, {}),
+                };
+            });
+        }
+
+        if (mergedOptions.trimResponseData) {
+
+            instance.postHook.processor.add((response: IResponseConfig): IResponseConfig => {
+
+                if (!response.data) {
+                    return response;
+                }
+
+                return {
+                    ...response,
+                    data: Object.keys(response.data).reduce((previous: Record<string, any>, key: string) => {
+                        if (response.data[key] === null || typeof response.data[key] === 'undefined') {
+                            return previous;
+                        }
+                        return {
+                            ...previous,
+                            [key]: response.data[key],
                         };
                     }, {}),
                 };
